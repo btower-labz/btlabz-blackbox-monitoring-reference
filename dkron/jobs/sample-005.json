@@ -1,0 +1,12 @@
+{
+  "name": "job-005",
+  "schedule": "@every 1m",
+  "concurrency": "forbid",
+  "metadata": {
+    "user_id": "12345"
+  },
+  "executor": "shell",
+  "executor_config": {
+    "command": "mtr -4 --tcp --gracetime 3 --mpls --json --no-dns -n 8.8.8.8"
+  }
+}

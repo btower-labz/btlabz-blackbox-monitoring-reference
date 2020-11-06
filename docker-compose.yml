@@ -1,0 +1,142 @@
+version: '3.7'
+
+volumes:
+    prometheus: {}
+    alertmanager: {}
+    grafana: {}
+    envoy: {}
+    dkron: {}
+
+networks:
+  public:
+  private:
+  database:
+
+services:
+
+  prometheus:
+    image: prom/prometheus:v2.22.1
+    volumes:
+      - ./prometheus/config:/etc/prometheus/
+      - prometheus:/prometheus
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--web.console.libraries=/usr/share/prometheus/console_libraries'
+      - '--web.console.templates=/usr/share/prometheus/consoles'
+    ports:
+      - 9090:9090
+    networks:
+      - public
+    restart: always
+
+  node-exporter:
+    image: prom/node-exporter:v1.0.1
+    volumes:
+      - /proc:/host/proc:ro
+      - /sys:/host/sys:ro
+      - /:/rootfs:ro
+    command: 
+      - '--path.procfs=/host/proc' 
+      - '--path.sysfs=/host/sys'
+      - --collector.filesystem.ignored-mount-points
+      - "^/(sys|proc|dev|host|etc|rootfs/var/lib/docker/containers|rootfs/var/lib/docker/overlay2|rootfs/run/docker/netns|rootfs/var/lib/docker/aufs)($$|/)"
+    ports:
+      - 9100:9100
+    networks:
+      - public
+    restart: always
+    deploy:
+      mode: global
+
+  alertmanager:
+    image: prom/alertmanager:v0.21.0
+    ports:
+      - 9093:9093
+    volumes:
+      - ./alertmanager/config:/etc/alertmanager/
+      - alertmanager:/alertmanager/
+    networks:
+      - public
+    restart: always
+    command:
+      - '--config.file=/etc/alertmanager/alertmanager.yml'
+      - '--storage.path=/alertmanager'
+
+  grafana:
+    image: grafana/grafana:7.3.1
+    ports:
+      - 3001:3000
+    volumes:
+      - grafana:/var/lib/grafana
+      - ./grafana/config:/etc/grafana/
+      - ./grafana/provisioning/:/etc/grafana/provisioning/
+      - ./grafana/dashboards:/var/lib/grafana/dashboards
+    env_file:
+      - ./grafana/grafana.env
+    networks:
+      - public
+    restart: always
+
+  pushgateway:
+    image: prom/pushgateway:v1.3.0
+    restart: always
+    expose:
+      - 9091
+    ports:
+      - "9091:9091"
+    networks:
+      - public
+
+  blackbox:
+    image: prom/blackbox-exporter:v0.18.0
+    volumes:
+      - ./blackbox/config:/etc/blackbox/
+      - ./blackbox/data:/blackbox
+    restart: always
+    command:
+      - '--config.file=/etc/blackbox/blackbox.yml'
+    expose:
+      - 9115
+    ports:
+      - "9115:9115"
+    networks:
+      - public
+
+  proxy:
+    image: envoyproxy/envoy:v1.16.0
+    environment:
+      ENVOY_UID: 0
+      ENVOY_GID: 0
+    volumes:
+      - ./envoy/config:/etc/envoy/
+      - envoy:/envoy
+    command:
+      - '--config-path /etc/envoy/envoy.yaml'
+    ports:
+      - 8080:8080
+      - 9901:9901
+    networks:
+      - public
+    restart: always
+
+  dkron:
+    image: dkron/dkron:v3.0.6
+    environment:
+      ENVOY_UID: 0
+      ENVOY_GID: 0
+    volumes:
+      - ./dkron/config:/etc/dkron/
+      - dkron:/dkron.data/
+    command:
+      - agent
+      - --server
+      - --bootstrap-expect=1
+      - --node-name=node1
+    ports:
+      - 8081:8080 # for serf layer between agents
+      - 8946:8946 # for HTTP for the API and Dashboard
+      - 6868:6868 # for gRPC and raft layer comunication between agents.
+    networks:
+      - public
+    restart: always

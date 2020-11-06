@@ -1,0 +1,5 @@
+curl localhost:8081/v1/jobs -XPOST --data-binary "@sample-001.json"
+curl localhost:8081/v1/jobs -XPOST --data-binary "@sample-002.json"
+curl localhost:8081/v1/jobs -XPOST --data-binary "@sample-003.json"
+curl localhost:8081/v1/jobs -XPOST --data-binary "@sample-004.json"
+curl localhost:8081/v1/jobs -XPOST --data-binary "@sample-005.json"

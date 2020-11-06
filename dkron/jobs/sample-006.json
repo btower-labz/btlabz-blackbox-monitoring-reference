@@ -1,0 +1,16 @@
+{
+    "name": "job-006",
+    "schedule": "@every 1h",
+    "disabled": false,
+    "tags": {
+        "server": "true:1"
+    },
+    "metadata": {
+        "user": "12345"
+    },
+    "concurrency": "forbid",
+    "executor": "shell",
+    "executor_config": {
+        "command": "apk add mtr curl"
+    }
+}

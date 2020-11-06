@@ -1,0 +1,9 @@
+  
+  {
+    "name": "job-003",
+    "parent_job": "job-002",
+    "executor": "shell",
+    "executor_config": {
+      "command": "echo \"Hello from child\""
+    }
+  }

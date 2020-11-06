@@ -1,0 +1,16 @@
+{
+    "name": "job-007",
+    "schedule": "@every 10s",
+    "disabled": false,
+    "tags": {
+        "server": "true:1"
+    },
+    "metadata": {
+        "user": "12345"
+    },
+    "concurrency": "forbid",
+    "executor": "shell",
+    "executor_config": {
+        "command": "bash -c \"echo pi_metric 3.14 | curl --location --show-error --silent --data-binary '@-' http://pushgateway:9091/metrics/job/job-007/instance/dkron\""
+    }
+}

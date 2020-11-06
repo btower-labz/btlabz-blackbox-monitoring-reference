@@ -1,0 +1,19 @@
+{
+    "name": "job-001",
+    "schedule": "@every 30s",
+    "timezone": "Europe/Berlin",
+    "owner": "Platform Team",
+    "owner_email": "platform@example.com",
+    "disabled": false,
+    "tags": {
+        "server": "true:1"
+    },
+    "metadata": {
+        "user": "12345"
+    },
+    "concurrency": "forbid",
+    "executor": "shell",
+    "executor_config": {
+        "command": "date"
+    }
+}

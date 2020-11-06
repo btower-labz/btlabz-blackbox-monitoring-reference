@@ -1,0 +1,12 @@
+{
+  "name": "job-004",
+  "schedule": "@every 1m",
+  "concurrency": "forbid",
+  "metadata": {
+    "user_id": "12345"
+  },
+  "executor": "shell",
+  "executor_config": {
+    "command": "ping -c 1 8.8.8.8"
+  }
+}

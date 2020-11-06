@@ -1,0 +1,98 @@
+global:
+  scrape_interval:     15s
+  evaluation_interval: 15s
+  external_labels:
+      monitor: 'monitoriong-poc'
+
+rule_files:
+  - 'alert.rules'
+
+alerting:
+  alertmanagers:
+  - scheme: http
+    static_configs:
+    - targets:
+      - "alertmanager:9093"
+
+scrape_configs:
+
+  - job_name: 'prometheus'
+    scrape_interval: 1m
+    static_configs:
+         - targets: ['localhost:9090']
+
+  - job_name: 'pushgateway'
+    scrape_interval: 1m
+    static_configs:
+      - targets:
+        - pushgateway:9091
+
+  - job_name: 'alertmanager'
+    scrape_interval: 1m
+    static_configs:
+      - targets:
+        - alertmanager:9093
+
+  - job_name: blackbox
+    scrape_interval: 1m
+    metrics_path: /metrics
+    static_configs:
+      - targets:
+        - blackbox:9115
+
+  - job_name: dkron
+    scrape_interval: 1m
+    metrics_path: /metrics
+    static_configs:
+      - targets:
+        - dkron:8080
+
+  - job_name: grafana
+    scrape_interval: 1m
+    metrics_path: /metrics
+    static_configs:
+      - targets:
+        - grafana:3000
+
+  - job_name: proxy
+    scrape_interval: 1m
+    # See: https://github.com/envoyproxy/envoy/issues/2182
+    metrics_path: /stats/prometheus
+    static_configs:
+      - targets:
+        - proxy:9901
+
+  - job_name: 'blackbox-ping'
+    scrape_interval: 30s
+    metrics_path: /probe
+    params:
+      module: [icmp_v4]
+    static_configs:
+      - targets:
+        - localhost
+        - 8.8.8.8
+        - www.emirates.com
+    relabel_configs:
+      - source_labels: [__address__]
+        target_label: __param_target
+      - source_labels: [__param_target]
+        target_label: instance
+      - target_label: __address__
+        replacement: blackbox:9115
+
+  - job_name: 'blackbox-http'
+    scrape_interval: 1m
+    metrics_path: /probe
+    params:
+      module: [http_2xx_v4]
+    static_configs:
+      - targets:
+        - prometheus.io
+        - www.google.com
+    relabel_configs:
+      - source_labels: [__address__]
+        target_label: __param_target
+      - source_labels: [__param_target]
+        target_label: instance
+      - target_label: __address__
+        replacement: blackbox:9115
