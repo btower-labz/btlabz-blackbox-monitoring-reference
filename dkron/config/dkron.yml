@@ -4,7 +4,7 @@
 
 
 data-dir: /dkron.data
-log-level: debug
+#log-level: debug
 tags:
   dc: local
 enable-prometheus: true
