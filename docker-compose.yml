@@ -120,14 +120,46 @@ services:
       - public
     restart: always
 
+  dkron-init:
+    image: curlimages/curl:7.73.0
+    deploy:
+      restart_policy:
+        condition: on-failure
+        delay: 15s
+        max_attempts: 10
+        window: 120s
+    volumes:
+      - ./dkron/jobs:/jobs/
+    entrypoint: /bin/sh
+    command:
+      - /jobs/jobs.sh
+
+      #      - --verbose
+#      - --show-error
+#      - --location
+#      - -XPOST
+#      - --data-binary
+#      - "@/jobs/sample-config.json"
+#      - http://dkron:8080/v1/jobs
+    networks:
+      - public
+    depends_on:
+      - dkron
+
   dkron:
+    #environment:
+    #  DKRON_VERSION: v3.0.6
     image: dkron/dkron:v3.0.6
-    environment:
-      ENVOY_UID: 0
-      ENVOY_GID: 0
+    #image: dkron:${DKRON_VERSION}
+    #build:
+    #  context: .
+    #  dockerfile: Dockerfile.dkron
+    #  args:
+    #    DKRON_VERSION: ${DKRON_VERSION}
     volumes:
       - ./dkron/config:/etc/dkron/
       - dkron:/dkron.data/
+      - ./dkron/jobs:/etc/dkron/jobs/
     command:
       - agent
       - --server
@@ -140,3 +172,4 @@ services:
     networks:
       - public
     restart: always
+      
