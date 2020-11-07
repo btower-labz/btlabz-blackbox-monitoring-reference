@@ -225,3 +225,20 @@ services:
     networks:
       - public
     restart: always
+
+  cadvisor:
+    image: gcr.io/cadvisor/cadvisor:v0.36.0
+    volumes:
+      - /:/rootfs:ro
+      - /var/run:/var/run:ro
+      - /sys:/sys:ro
+      - /var/lib/docker/:/var/lib/docker:ro
+      - /dev/disk/:/dev/disk:ro
+    privileged: true
+    devices:
+      - /dev/kmsg:/dev/kmsg
+    ports:
+      - 8082:8080
+    networks:
+      - public
+    restart: always
