@@ -1,6 +1,6 @@
 {
     "name": "job-006",
-    "schedule": "@every 1h",
+    "schedule": "@manually",
     "disabled": false,
     "tags": {
         "server": "true:1"
