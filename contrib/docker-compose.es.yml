@@ -1,0 +1,61 @@
+version: '3.7'
+
+volumes:
+    es: {}
+
+networks:
+  public:
+
+services:
+
+  es:
+    image: elasticsearch:7.9.3
+    environment:
+      - node.name=es
+      - discovery.type=single-node
+      - cluster.name=es-cluster
+      - bootstrap.memory_lock=true
+      # - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1      
+    volumes:
+      - es:/usr/share/elasticsearch/data
+    ports:
+      - 9200:9200
+      - 9300:9300
+    networks:
+      - public
+    restart: always
+
+  es-exporter:
+    image: justwatch/elasticsearch_exporter:1.1.0
+    command:
+      - '--es.uri=http://es:9200'
+      #- '--es.cluster_settings=true'
+      #- '--es.indices=true'
+      #- '--es.indices_settings=true'
+      #- '--es.shards=true'
+      #- '--es.snapshots'
+    restart: always
+    ports:
+      - 9114:9114
+    networks:
+      - public
+
+  kibana:
+    image: kibana:7.9.3
+    environment:
+      SERVER_NAME: kibana
+      #SERVER_BASEPATH: /kibana
+      #SERVER_HOST: "0"
+      MONITORING_ENABLED: "true"
+      ELASTICSEARCH_HOSTS: http://es:9200
+    #volumes:
+    #  - kibana/kibana.yml:/usr/share/kibana/config/kibana.yml
+    ports:
+      - 5601:5601
+    networks:
+      - public
+    restart: always
