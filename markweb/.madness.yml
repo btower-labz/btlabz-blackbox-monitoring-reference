@@ -1,0 +1,15 @@
+# .madness.yml
+path: '/docs'
+port: '3030'
+bind: '0.0.0.0'
+sidebar: true
+auto_h1: true
+auto_nav: true
+highlighter: true
+line_numbers: true
+copy_code: true
+index: false
+search_limit: 100
+dtoc: Table of Contents
+theme: _theme
+open: false
