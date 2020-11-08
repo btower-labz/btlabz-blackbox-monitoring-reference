@@ -7,6 +7,7 @@ volumes:
     envoy: {}
     dkron: {}
     es: {}
+    pushgateway: {}
 
 networks:
   public:
@@ -25,8 +26,16 @@ services:
       - '--storage.tsdb.path=/prometheus'
       - '--web.console.libraries=/usr/share/prometheus/console_libraries'
       - '--web.console.templates=/usr/share/prometheus/consoles'
-    ports:
-      - 9090:9090
+      - '--web.external-url=http://localhost/prometheus'
+      - '--web.route-prefix=/prometheus'
+      - '--web.max-connections=128'
+      - '--web.listen-address=0.0.0.0:9090'
+      - '--web.enable-lifecycle'
+      - '--web.enable-admin-api'
+    expose:
+      - 9090
+    #ports:
+    #  - 9090:9090
     networks:
       - public
     restart: always
@@ -42,8 +51,10 @@ services:
       - '--path.sysfs=/host/sys'
       - --collector.filesystem.ignored-mount-points
       - "^/(sys|proc|dev|host|etc|rootfs/var/lib/docker/containers|rootfs/var/lib/docker/overlay2|rootfs/run/docker/netns|rootfs/var/lib/docker/aufs)($$|/)"
-    ports:
-      - 9100:9100
+    expose:
+      - 9100
+    #ports:
+    #  - 9100:9100
     networks:
       - public
     restart: always
@@ -52,8 +63,10 @@ services:
 
   alertmanager:
     image: prom/alertmanager:v0.21.0
-    ports:
-      - 9093:9093
+    expose:
+      - 9093
+    # ports:
+    #   - 9093:9093
     volumes:
       - ./alertmanager/config:/etc/alertmanager/
       - alertmanager:/alertmanager/
@@ -63,11 +76,15 @@ services:
     command:
       - '--config.file=/etc/alertmanager/alertmanager.yml'
       - '--storage.path=/alertmanager'
+      - '--web.external-url=http://localhost/alertmanager'
+      - '--web.route-prefix=/alertmanager'
 
   grafana:
     image: grafana/grafana:7.3.1
-    ports:
-      - 3001:3000
+    expose:
+      - 3000
+    # ports:
+    #   - 3001:3000
     volumes:
       - grafana:/var/lib/grafana
       - ./grafana/config:/etc/grafana/
@@ -82,12 +99,20 @@ services:
   pushgateway:
     image: prom/pushgateway:v1.3.0
     restart: always
+    volumes:
+      - pushgateway:/pushgateway
     expose:
       - 9091
-    ports:
-      - "9091:9091"
+    # ports:
+    #   - 9091:9091
     networks:
       - public
+    command:
+      - '--web.listen-address=0.0.0.0:9091'
+      - '--web.external-url=http://localhost/pushgateway'
+      - '--web.route-prefix=/pushgateway'
+      - '--persistence.file="/pushgateway/metrics.dat"'
+      - '--persistence.interval=5m'
 
   blackbox:
     image: prom/blackbox-exporter:v0.18.0
@@ -97,14 +122,18 @@ services:
     restart: always
     command:
       - '--config.file=/etc/blackbox/blackbox.yml'
+      - '--web.listen-address=0.0.0.0:9115'
+      - '--web.external-url=http://localhost/blackbox'
+      - '--web.route-prefix=/blackbox'
+      - '--history.limit=500'
     expose:
       - 9115
-    ports:
-      - "9115:9115"
+    # ports:
+    #   - "9115:9115"
     networks:
       - public
 
-  proxy:
+  envoy:
     image: envoyproxy/envoy:v1.16.0
     environment:
       ENVOY_UID: 0
@@ -114,6 +143,9 @@ services:
       - envoy:/envoy
     command:
       - '--config-path /etc/envoy/envoy.yaml'
+    expose:
+      - 8080
+      - 9901
     ports:
       - 8080:8080
       - 9901:9901
@@ -134,29 +166,13 @@ services:
     entrypoint: /bin/sh
     command:
       - /jobs/jobs.sh
-
-      #      - --verbose
-#      - --show-error
-#      - --location
-#      - -XPOST
-#      - --data-binary
-#      - "@/jobs/sample-config.json"
-#      - http://dkron:8080/v1/jobs
     networks:
       - public
     depends_on:
       - dkron
 
   dkron:
-    #environment:
-    #  DKRON_VERSION: v3.0.6
     image: dkron/dkron:v3.0.6
-    #image: dkron:${DKRON_VERSION}
-    #build:
-    #  context: .
-    #  dockerfile: Dockerfile.dkron
-    #  args:
-    #    DKRON_VERSION: ${DKRON_VERSION}
     volumes:
       - ./dkron/config:/etc/dkron/
       - dkron:/dkron.data/
@@ -166,62 +182,14 @@ services:
       - --server
       - --bootstrap-expect=1
       - --node-name=node1
+    expose:
+      - 8080
+      - 8946
+      - 6868
     ports:
       - 8081:8080 # for serf layer between agents
-      - 8946:8946 # for HTTP for the API and Dashboard
-      - 6868:6868 # for gRPC and raft layer comunication between agents.
-    networks:
-      - public
-    restart: always
-      
-  es:
-    image: elasticsearch:7.9.3
-    environment:
-      - node.name=es
-      - discovery.type=single-node
-      - cluster.name=es-cluster
-      - bootstrap.memory_lock=true
-      # - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
-    ulimits:
-      memlock:
-        soft: -1
-        hard: -1      
-    volumes:
-      - es:/usr/share/elasticsearch/data
-    ports:
-      - 9200:9200
-      - 9300:9300
-    networks:
-      - public
-    restart: always
-
-  es-exporter:
-    image: justwatch/elasticsearch_exporter:1.1.0
-    command:
-      - '--es.uri=http://es:9200'
-      #- '--es.cluster_settings=true'
-      #- '--es.indices=true'
-      #- '--es.indices_settings=true'
-      #- '--es.shards=true'
-      #- '--es.snapshots'
-    restart: always
-    ports:
-      - 9114:9114
-    networks:
-      - public
-
-  kibana:
-    image: kibana:7.9.3
-    environment:
-      SERVER_NAME: kibana
-      #SERVER_BASEPATH: /kibana
-      #SERVER_HOST: "0"
-      MONITORING_ENABLED: "true"
-      ELASTICSEARCH_HOSTS: http://es:9200
-    #volumes:
-    #  - kibana/kibana.yml:/usr/share/kibana/config/kibana.yml
-    ports:
-      - 5601:5601
+      # - 8946:8946 # for HTTP for the API and Dashboard
+      # - 6868:6868 # for gRPC and raft layer comunication between agents.
     networks:
       - public
     restart: always
@@ -237,8 +205,30 @@ services:
     privileged: true
     devices:
       - /dev/kmsg:/dev/kmsg
-    ports:
-      - 8082:8080
+    expose:
+      - 8080
+    # ports:
+    #   - 8082:8080
+    command:
+      #- '-listen_ip'
+      #- '0.0.0.0'
+      #- '-port'
+      #- '8080'
+      - -url_base_prefix
+      - '/cadvisor'
     networks:
       - public
     restart: always
+
+  markweb:
+    image: dannyben/madness:0.8.3
+    # environment:
+    #   MADNESS_FORCE_SSL: 0
+    volumes:
+      - ./markweb:/docs
+    ports:
+      - 8083:3030
+    networks:
+      - public
+
+
