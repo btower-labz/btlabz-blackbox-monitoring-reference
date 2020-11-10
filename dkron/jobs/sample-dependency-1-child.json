@@ -1,0 +1,11 @@
+{
+  "name": "sample-dependency-child",
+  "parent_job": "sample-dependency-parent",
+  "tags": {
+    "server": "true:1"
+  },
+  "executor": "shell",
+  "executor_config": {
+    "command": "echo \"Hello from child\""
+  }
+}

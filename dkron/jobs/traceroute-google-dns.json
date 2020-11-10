@@ -1,19 +1,17 @@
 {
-    "name": "job-001",
+    "name": "traceroute-google-dns",
     "schedule": "@every 30s",
-    "timezone": "Europe/Berlin",
-    "owner": "Platform Team",
-    "owner_email": "platform@example.com",
+    "timezone": "Asia/Dubai",
     "disabled": false,
     "tags": {
         "server": "true:1"
     },
     "metadata": {
-        "user": "12345"
+        "user": "system"
     },
     "concurrency": "forbid",
     "executor": "shell",
     "executor_config": {
-        "command": "bash /scripts/tr2prom.sh"
+        "command": "bash /scripts/tr2prom.sh 8.8.8.8"
     }
 }

@@ -41,17 +41,16 @@ update_dkron_job()
   fi
 }
 
-update_dkron_job /jobs/sample-001.json
-update_dkron_job /jobs/sample-002.json
-update_dkron_job /jobs/sample-003.json
-update_dkron_job /jobs/sample-004.json
-update_dkron_job /jobs/sample-005.json
-update_dkron_job /jobs/sample-006.json true
-update_dkron_job /jobs/sample-007.json
+for f in /jobs/*.json; do
+  if [ "${f}" == "*-config.json" ]; then
+    update_dkron_job ${f}
+  else
+    update_dkron_job ${f} true
+  fi
+done;
 
 echo "Sleep ..."
 sleep 10s
 
 echo "Finished ..."
-
 exit 0

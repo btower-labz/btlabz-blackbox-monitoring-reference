@@ -1,9 +1,9 @@
 {
-  "name": "job-004",
+  "name": "sample-ping-usage",
   "schedule": "@every 1m",
   "concurrency": "forbid",
   "metadata": {
-    "user_id": "12345"
+    "user_id": "system"
   },
   "executor": "shell",
   "executor_config": {

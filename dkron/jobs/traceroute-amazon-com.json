@@ -1,16 +1,17 @@
 {
-    "name": "job-006",
-    "schedule": "@manually",
+    "name": "traceroute-amazon-com",
+    "schedule": "@every 30s",
+    "timezone": "Asia/Dubai",
     "disabled": false,
     "tags": {
         "server": "true:1"
     },
     "metadata": {
-        "user": "12345"
+        "user": "system"
     },
     "concurrency": "forbid",
     "executor": "shell",
     "executor_config": {
-        "command": "apk add mtr curl jq"
+        "command": "bash /scripts/tr2prom.sh www.amazon.com"
     }
 }

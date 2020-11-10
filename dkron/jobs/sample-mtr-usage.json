@@ -1,9 +1,12 @@
 {
-  "name": "job-005",
-  "schedule": "@every 1m",
+  "name": "sample-mtr-usage",
+  "schedule": "@every 5m",
   "concurrency": "forbid",
+  "tags": {
+    "server": "true:1"
+  },
   "metadata": {
-    "user_id": "12345"
+    "user_id": "system"
   },
   "executor": "shell",
   "executor_config": {

@@ -1,12 +1,12 @@
 {
-    "name": "job-007",
+    "name": "sample-pgw-metric",
     "schedule": "@every 10s",
     "disabled": false,
     "tags": {
         "server": "true:1"
     },
     "metadata": {
-        "user": "12345"
+        "user": "system"
     },
     "concurrency": "forbid",
     "executor": "shell",

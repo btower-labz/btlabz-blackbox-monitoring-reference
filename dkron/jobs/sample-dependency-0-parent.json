@@ -1,0 +1,11 @@
+{
+  "name": "sample-dependency-parent",
+  "schedule": "@every 30s",
+  "tags": {
+    "server": "true:1"
+  },
+  "executor": "shell",
+  "executor_config": {
+    "command": "echo \"Hello from parent\""
+  }
+}

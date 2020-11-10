@@ -160,12 +160,13 @@ services:
         condition: on-failure
         delay: 15s
         max_attempts: 10
-        window: 120s
+        window: 300s
     volumes:
       - ./dkron/jobs:/jobs/
+      - ./dkron/scripts:/scripts/
     entrypoint: /bin/sh
     command:
-      - /jobs/jobs.sh
+      - /scripts/set-jobs.sh
     networks:
       - public
     depends_on:

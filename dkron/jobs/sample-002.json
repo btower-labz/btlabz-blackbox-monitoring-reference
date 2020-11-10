@@ -1,8 +1,0 @@
-{
-    "name": "job-002",
-    "schedule": "@every 30s",
-    "executor": "shell",
-    "executor_config": {
-      "command": "echo \"Hello from parent\""
-    }
-  }

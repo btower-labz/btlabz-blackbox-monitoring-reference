@@ -4,8 +4,9 @@ set -u
 
 PROM_API=http://pushgateway:9091/pushgateway/metrics
 PROM_JOB=traceroute
-PROM_INSTANCE=dkron
-TARGET=8.8.8.8
+PROM_INSTANCE=${1}
+TARGET=${1}
+echo "PROBE TARGET: ${1}"
 
 # See: https://github.com/prometheus/pushgateway
 PGW_URL="${PROM_API}/job/${PROM_JOB}/instance/${PROM_INSTANCE}"
