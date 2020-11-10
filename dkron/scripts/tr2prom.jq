@@ -3,6 +3,7 @@
 # See: https://ss64.com/bash/mtr.html
 # See: https://github.com/prometheus/pushgateway
 
+# Make hop metrics
 # Input: a hop
 # Ouput: formed metrics array (no labels)
 def metrics(t): t as $t | . |
@@ -71,9 +72,6 @@ def help_header(n;h):
 ;
 
 # Make TYPE and HELP headers
-# hops - linux timestamp
-# time - linux timestamp
-# Output: distinct metrics headers
 def headers(hops;time):
 time as $time |
 [
@@ -109,10 +107,6 @@ hop as $hop |
 ;
 
 # Build up values array
-# Input: none expected
-# r - report object
-# t - unix timestamp
-# Output: array of prom metrics
 def values(mtr;hops;time):
 time as $time |
 mtr as $mtr |
@@ -126,13 +120,33 @@ mtr as $mtr |
 join("\n")
 ;
 
+# Common MTR metric
+def mtr_metrics(mtr;time):
+  time as $time |
+  mtr as $mtr | [
+  "# TYPE traceroute_probe_mtr_time counter",
+  "# HELP traceroute_probe_mtr_time The time of execution. A freshness indicator.",
+  (["traceroute_probe_mtr_time{",
+  ([
+      "source=\"\($mtr.src)\"",
+      "target=\"\($mtr.dst)\"",
+      "tests=\"\($mtr.tests)\"",
+      "psize=\"\($mtr.psize)\"",
+      "tos=\"\($mtr.tos)\"",
+      "bitpattern=\"\($mtr.bitpattern)\""
+    ] | join(",")),
+  "} \($time)"] | join(""))
+  ] | join("\n")
+;
+
 # Main filter
 now as $time |
 .report.mtr as $mtr |
 .report.hubs as $hops |
 headers($hops; $time) as $headers |
 values($mtr; $hops; $time) as $values |
-"\($headers)\n\n\($values)\n"
+mtr_metrics($mtr; $time) as $mtr_metrics |
+"\($headers)\n\n\($values)\n\n\($mtr_metrics)\n"
 
 # Data sample
 

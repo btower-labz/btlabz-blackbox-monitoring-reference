@@ -17,7 +17,7 @@ OFILE=/tmp/out.json
 FFILE=/scripts/tr2prom.jq
 MFILE=/tmp/metrics.txt
 
-mtr ${OPTIONS}  ${TARGET} > ${OFILE}
+mtr ${OPTIONS} ${TARGET} > ${OFILE}
 retVal=$?
 if [ $retVal -ne 0 ]; then
   echo "Error running traceroute: ${retVal}"
