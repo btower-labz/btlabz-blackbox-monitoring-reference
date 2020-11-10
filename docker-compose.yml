@@ -32,6 +32,8 @@ services:
       - '--web.listen-address=0.0.0.0:9090'
       - '--web.enable-lifecycle'
       - '--web.enable-admin-api'
+      - '--storage.tsdb.retention.time=30d'
+      - '--storage.tsdb.retention.size=0'
     expose:
       - 9090
     #ports:
