@@ -1,0 +1,21 @@
+groups:
+- name: BlackBox
+  rules:
+
+  - alert: ping-probe-down
+    expr: up{job=~"^(blackbox-ping)$"} == 0
+    for: 5m
+    labels:
+      severity: critical
+    annotations:
+      summary: "BlackBox ping probe is not responding: {{ $labels.instance }}"
+      description: "The host {{ $labels.instance }} is not able to send echo response back to BlackBox Exporter."
+      
+  - alert: http-probe-down
+    expr: up{job=~"^(blackbox-http)$"} == 0
+    for: 5m
+    labels:
+      severity: critical
+    annotations:
+      summary: "BlackBox http probe is not responding: {{ $labels.instance }}"
+      description: "The host {{ $labels.instance }} is not able to respond to GET request from BlackBox Exporter."
