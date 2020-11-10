@@ -11,11 +11,21 @@ echo "PROBE TARGET: ${1}"
 # See: https://github.com/prometheus/pushgateway
 PGW_URL="${PROM_API}/job/${PROM_JOB}/instance/${PROM_INSTANCE}"
 
+TMPDIR=$(mktemp -d -t "tr2prom.XXXXXXXX")
+retVal=$?
+if [ $retVal -ne 0 ]; then
+  echo "Error creating temp dir: ${retVal}"
+  exit $retVal
+else
+  echo "TMPDIR: ${TMPDIR}"
+fi
+trap "rm -rf ${TMPDIR}" EXIT
+
 # See: https://linux.die.net/man/8/mtr
 OPTIONS="--report-cycles 1 --interval 1 -4 --timeout 10 --psize 16 --tcp --gracetime 3 --mpls --json --no-dns --show-ips --mpls -n"
-OFILE=/tmp/out.json
+OFILE=${TMPDIR}/traceroute.json
 FFILE=/scripts/tr2prom.jq
-MFILE=/tmp/metrics.txt
+MFILE=${TMPDIR}/metrics.txt
 
 mtr ${OPTIONS} ${TARGET} > ${OFILE}
 retVal=$?
