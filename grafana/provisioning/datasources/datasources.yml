@@ -14,7 +14,7 @@ datasources:
   type: 'prometheus'
   access: 'proxy'
   org_id: 1
-  url: 'http://prometheus:9090'
+  url: 'http://prometheus:9090/prometheus'
   is_default: true
   version: 1
   editable: true
