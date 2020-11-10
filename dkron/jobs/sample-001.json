@@ -14,6 +14,6 @@
     "concurrency": "forbid",
     "executor": "shell",
     "executor_config": {
-        "command": "date"
+        "command": "bash /scripts/tr2prom.sh"
     }
 }

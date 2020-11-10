@@ -177,6 +177,7 @@ services:
       - ./dkron/config:/etc/dkron/
       - dkron:/dkron.data/
       - ./dkron/jobs:/etc/dkron/jobs/
+      - ./dkron/scripts:/scripts/
     command:
       - agent
       - --server
