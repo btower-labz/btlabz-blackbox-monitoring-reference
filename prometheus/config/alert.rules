@@ -10,7 +10,7 @@ groups:
     annotations:
       summary: "BlackBox ping probe is not responding: {{ $labels.instance }}"
       description: "The host {{ $labels.instance }} is not able to send echo response back to BlackBox Exporter."
-      
+
   - alert: http-probe-down
     expr: up{job=~"^(blackbox-http)$"} == 0
     for: 5m
@@ -19,3 +19,66 @@ groups:
     annotations:
       summary: "BlackBox http probe is not responding: {{ $labels.instance }}"
       description: "The host {{ $labels.instance }} is not able to respond to GET request from BlackBox Exporter."
+
+- name: TraceRoute - Absent
+  rules:
+
+  - alert: traceroute-probe-down-google-dns
+    expr: absent_over_time(traceroute_probe_avg{job="traceroute",instance="8.8.8.8"}[1m])
+    for: 5m
+    labels:
+      severity: critical
+    annotations:
+      summary: "TraceRoute probe does not send metrics: {{ $labels.instance }}."
+      description: "TraceRoute probe is not able to send routes data for host {{ $labels.instance }}."
+
+  - alert: traceroute-probe-down-microsoft-com
+    expr: absent_over_time(traceroute_probe_avg{job="traceroute",instance="www.microsoft.com"}[1m])
+    for: 5m
+    labels:
+      severity: critical
+    annotations:
+      summary: "TraceRoute probe does not send metrics: {{ $labels.instance }}."
+      description: "TraceRoute probe is not able to send routes data for host {{ $labels.instance }}."
+
+  - alert: traceroute-probe-down-amazon-com
+    expr: absent_over_time(traceroute_probe_avg{job="traceroute",instance="www.amazon.com"}[1m])
+    for: 5m
+    labels:
+      severity: critical
+    annotations:
+      summary: "TraceRoute probe does not send metrics: {{ $labels.instance }}."
+      description: "TraceRoute probe is not able to send routes data for host {{ $labels.instance }}."
+
+- name: TraceRoute - Stale
+  rules:
+
+  - alert: traceroute-probe-stale-google-dns
+    expr: rate(traceroute_probe_time{job="traceroute",instance=~"8.8.8.8"}[5m]) < 1
+    for: 5m
+    labels:
+      severity: critical
+    annotations:
+      summary: "TraceRoute probe does not send metrics: {{ $labels.instance }}."
+      description: "TraceRoute probe is not able to send routes data for host {{ $labels.instance }}."
+
+  - alert: traceroute-probe-stale-microsoft-com
+    expr: rate(traceroute_probe_time{job="traceroute",instance=~"www.microsoft.com"}[5m]) < 1
+    for: 5m
+    labels:
+      severity: critical
+    annotations:
+      summary: "TraceRoute probe does not send metrics: {{ $labels.instance }}."
+      description: "TraceRoute probe is not able to send routes data for host {{ $labels.instance }}."
+
+  - alert: traceroute-probe-stale-amazon-com
+    expr: rate(traceroute_probe_time{job="traceroute",instance=~"www.amazon.com"}[5m]) < 1
+    for: 5m
+    labels:
+      severity: critical
+    annotations:
+      summary: "TraceRoute probe does not send metrics: {{ $labels.instance }}."
+      description: "TraceRoute probe is not able to send routes data for host {{ $labels.instance }}."
+
+
+      
