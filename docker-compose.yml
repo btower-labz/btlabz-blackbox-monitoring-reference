@@ -111,8 +111,8 @@ services:
       - '--web.listen-address=0.0.0.0:9091'
       - '--web.external-url=http://localhost/pushgateway'
       - '--web.route-prefix=/pushgateway'
-      - '--persistence.file="/pushgateway/metrics.dat"'
-      - '--persistence.interval=5m'
+#      - '--persistence.file="/pushgateway/metrics.dat"'
+#      - '--persistence.interval=5m'
 
   blackbox:
     image: prom/blackbox-exporter:v0.18.0
