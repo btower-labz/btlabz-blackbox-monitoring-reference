@@ -14,9 +14,9 @@ def metrics(t): t as $t | . |
 [
     { 
         # TODO: Check variable placement. It might be better to set this on the command line.
-        metric: "\($tr_metric_prefix)_now", hop: $tr_hop, host: $tr_host, 
+        metric: "\($tr_metric_prefix)_time", hop: $tr_hop, host: $tr_host, 
         value: $t, type: "counter",
-        help: "The parse time, in seconds since the Unix epoch. Results freshness." 
+        help: "The probe time, in seconds since the Unix epoch. Results freshness." 
     },
     { 
         metric: "\($tr_metric_prefix)_loss", hop: $tr_hop, host: $tr_host, 

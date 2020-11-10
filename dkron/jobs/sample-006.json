@@ -11,6 +11,6 @@
     "concurrency": "forbid",
     "executor": "shell",
     "executor_config": {
-        "command": "apk add mtr curl"
+        "command": "apk add mtr curl jq"
     }
 }
