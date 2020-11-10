@@ -5,7 +5,7 @@
 | Component | Interface | Metrics | Notes |
 | --- | --- | --- | --- |
 | Envoy Proxy | [admin](/envoy) | [metrics](/envoy/metrics) | Management and search interface access |
-| Prometheus | [admin](/prometheus) | [metrics](/prometheus/metrics)<br>[targets](/prometheus/targets) | Management and search interface access |
+| Prometheus | [admin](/prometheus)<br>[debug](/prometheus/debug/pprof/) | [metrics](/prometheus/metrics)<br>[targets](/prometheus/targets) | Management and search interface access |
 | Grafana Dashboards | [admin](/grafana) | [metrics](/grafana/metrics) | Service Aviability Dashboards |
 | Alert Manager | [admin](/alertmanager) | [metrics](/alertmanager/metrics) | Service Aviability Alerts |
 | Push Gateway | [admin](/pushgateway) | [metrics](/pushgateway/metrics) | "Push" metrics collector |
