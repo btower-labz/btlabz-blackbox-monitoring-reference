@@ -82,6 +82,22 @@ services:
       - public
     restart: always
 
+  # TODO: Use Crate Native Agent. See: https://github.com/crate/jmx_exporter
+  # crate-jmx-exporter:
+  #   image: docker.io/bitnami/jmx-exporter:0.14.0-debian-10-r65
+  #   volumes:
+  #     - ./crate/crate-jmx-exporter.yml:/etc/jmx_exporter/jmx_exporter.yaml
+  #   expose:
+  #     - 5556
+  #   ports:
+  #     - 5556:5556
+  #   command:
+  #     - "5556"
+  #     - /etc/jmx_exporter/jmx_exporter.yaml
+  #   networks:
+  #     - public
+  #   restart: always
+
   crate-01-vol-init:
     image: bash:5.0.18
     volumes:

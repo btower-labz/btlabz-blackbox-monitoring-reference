@@ -1,0 +1,32 @@
+---
+
+startDelaySeconds: 10
+hostPort: 0.0.0.0:5556
+username: 
+password: 
+jmxUrl: service:jmx:rmi:///jndi/rmi://crate-01:7979/jmxrmi
+ssl: false
+lowercaseOutputName: false
+lowercaseOutputLabelNames: false
+
+whitelistObjectNames:
+- "io.crate.monitoring:*"
+#blacklistObjectNames: 
+#- "org.apache.cassandra.metrics:type=ColumnFamily,*"
+
+rules:
+
+- pattern: ^io.crate.monitoring<type=QueryStats><>(.+)QueryAverageDuration
+  name: crate_query_duration_seconds
+  valueFactor: 0.001
+  labels:
+    query: $1
+  help: The average query duration for a given query type.
+
+- pattern: ^io.crate.monitoring<type=QueryStats><>(.+)QueryFrequency
+  name: crate_queries
+  labels:
+    query: $1
+  help: Queries per second for a given query type.
+
+...
