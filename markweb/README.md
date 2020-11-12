@@ -11,5 +11,6 @@
 | Push Gateway | [admin](/pushgateway) | [metrics](/pushgateway/metrics) | "Push" metrics collector |
 | BlackBox Probe | [admin](/blackbox) | [metrics](/blackbox/metrics) | BlackBox icmp and http probe |
 | DKRON Scheduler | [admin](/dkron) | [metrics](/dkron/metrics) | TraceRT and other tasks which are not supported by prom directly |
+| CrateDB | [admin](/cratedb) |  | Metrics Storage Backend |
 | Container Advisor | [admin](/cadvisor) | [metrics](/cadvisor/metrics) | Docker Stats |
 | Node Exporter | [admin](/node) | [metrics](/node/metrics) | Black Box Node Statictics Exporter |
