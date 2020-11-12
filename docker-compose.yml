@@ -8,6 +8,9 @@ volumes:
     dkron: {}
     es: {}
     pushgateway: {}
+    crate-data-01: {}
+    crate-logs-01: {}
+    crate-repos-01: {}
 
 networks:
   public:
@@ -38,6 +41,77 @@ services:
       - 9090
     #ports:
     #  - 9090:9090
+    networks:
+      - public
+    restart: always
+
+  # See: https://crate.io/docs/crate/howtos/en/latest/deployment/containers/docker.html
+  crate-01:
+    image: crate:4.3.1
+    volumes:
+      - crate-data-01:/data/data
+      - crate-logs-01:/data/log
+      - crate-repos-01:/repos
+      - ./cratedb/sysctl.conf:/etc/sysctl.conf
+    environment:
+      CRATE_JAVA_OPTS: >-
+        -Dcom.sun.management.jmxremote
+        -Dcom.sun.management.jmxremote.port=7979
+        -Dcom.sun.management.jmxremote.ssl=false
+        -Dcom.sun.management.jmxremote.authenticate=false
+        -Dcom.sun.management.jmxremote.rmi.port=7979
+        -Djava.rmi.server.hostname=crate-01
+    command:
+      - '-Cnetwork.host=_site_'
+      - '-Cnode.name=crate01'
+      #- '-Cdiscovery.seed_hosts=crate02,crate03'
+      #- '-Ccluster.initial_master_nodes=crate01,crate02'
+      - '-Ccluster.initial_master_nodes=crate01'
+      #- '-Cgateway.expected_nodes=3'
+      - '-Cgateway.expected_nodes=1'
+      #- '-Cgateway.recover_after_nodes=3'
+      - '-Cgateway.recover_after_nodes=1'
+      - '-Cpath.repo=/repos'
+    expose:
+      - 4200
+      - 7979
+    ports:
+      - 4200:4200
+      - 7979:7979
+    networks:
+      - public
+    restart: always
+
+  crate-01-vol-init:
+    image: bash:5.0.18
+    volumes:
+      - crate-repos-01:/repos
+      #- ./crate/scripts:/scripts
+    command:
+      - bash
+      - -c
+      - chmod -R ugo+rw /repos
+    deploy:
+      restart_policy:
+        condition: on-failure
+        delay: 10s
+        max_attempts: 5
+        window: 120s
+
+  # See: https://github.com/crate/crate_adapter
+  crate-adapter:
+    image: crate/crate_adapter:0.2
+    volumes:
+      - ./crate/crate-adapter.yml:/etc/crate/crate-adapter.yml
+    command:
+      - -config.file
+      - /etc/crate/crate-adapter.yml
+      - -web.listen-address
+      - 0.0.0.0:9268
+    expose:
+      - 9268
+    ports:
+      - 9268:9268
     networks:
       - public
     restart: always
