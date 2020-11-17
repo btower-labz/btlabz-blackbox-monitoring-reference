@@ -1,5 +1,5 @@
 {
-    "name": "traceroute-amazon-com",
+    "name": "traceroute-www-amazon-com",
     "schedule": "@every 30s",
     "timezone": "Asia/Dubai",
     "disabled": false,

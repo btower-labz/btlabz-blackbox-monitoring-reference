@@ -1,0 +1,17 @@
+{
+    "name": "traceroute-sts-amazonaws-com",
+    "schedule": "@every 30s",
+    "timezone": "Asia/Dubai",
+    "disabled": false,
+    "tags": {
+        "server": "true:1"
+    },
+    "metadata": {
+        "user": "system"
+    },
+    "concurrency": "forbid",
+    "executor": "shell",
+    "executor_config": {
+        "command": "bash /scripts/tr2prom.sh sts.amazonaws.com"
+    }
+}

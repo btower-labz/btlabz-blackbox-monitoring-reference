@@ -11,6 +11,6 @@
     "concurrency": "forbid",
     "executor": "shell",
     "executor_config": {
-        "command": "bash -c \"echo pi_metric 3.14 | curl --location --show-error --silent --data-binary '@-' http://pushgateway:9091/metrics/job/job-007/instance/dkron\""
+        "command": "bash -c \"echo pi_metric 3.14 | curl --location --show-error --silent --data-binary '@-' http://pushgateway:9091/pushgateway/metrics/job/job-007/instance/dkron\""
     }
 }
