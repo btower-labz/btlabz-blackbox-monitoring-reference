@@ -93,6 +93,142 @@ scrape_configs:
       - target_label: __address__
         replacement: blackbox:9115
 
+  - job_name: 'blackbox-https'
+    scrape_interval: 1m
+    metrics_path: /blackbox/probe
+    params:
+      module: [https_2xx_v4]
+    static_configs:
+      - targets:
+        - https://sts.amazonaws.com
+        - https://registry.hub.docker.com/library
+        labels:
+          region: global
+      # - targets:
+      #   - https://sts.us-east-2.amazonaws.com
+      #   - https://s3.us-east-2.amazonaws.com
+      #   labels:
+      #     region: us-east-2
+      # - targets:
+      #   - https://sts.us-east-1.amazonaws.com
+      #   - https://s3.us-east-1.amazonaws.com
+      #   labels:
+      #     region: us-east-1
+      # - targets:
+      #   - https://sts.us-west-1.amazonaws.com
+      #   - https://s3.us-west-1.amazonaws.com
+      #   labels:
+      #     region: us-west-1
+      # - targets:
+      #   - https://sts.us-west-2.amazonaws.com
+      #   - https://s3.us-west-2.amazonaws.com
+      #   labels:
+      #     region: us-west-2
+      # - targets:
+      #   - https://sts.af-south-1.amazonaws.com
+      #   - https://s3.af-south-1.amazonaws.com
+      #   labels:
+      #     region: af-south-1
+      # - targets:
+      #   - https://sts.ap-east-1.amazonaws.com
+      #   - https://s3.ap-east-1.amazonaws.com
+      #   labels:
+      #     region: ap-east-1
+      # - targets:
+      #   - https://sts.ap-south-1.amazonaws.com
+      #   - https://s3.ap-south-1.amazonaws.com
+      #   labels:
+      #     region: ap-south-1
+      # - targets:
+      #   - https://sts.ap-northeast-3.amazonaws.com
+      #   - https://s3.ap-northeast-3.amazonaws.com
+      #   labels:
+      #     region: ap-northeast-3
+      # - targets:
+      #   - https://sts.ap-northeast-2.amazonaws.com
+      #   - https://s3.ap-northeast-2.amazonaws.com
+      #   labels:
+      #     region: ap-northeast-2
+      # - targets:
+      #   - https://sts.ap-southeast-1.amazonaws.com
+      #   - https://s3.ap-southeast-1.amazonaws.com
+      #   labels:
+      #     region: ap-southeast-1
+      # - targets:
+      #   - https://sts.ap-southeast-2.amazonaws.com
+      #   - https://s3.ap-southeast-2.amazonaws.com
+      #   labels:
+      #     region: ap-southeast-2
+      # - targets:
+      #   - https://sts.ap-northeast-1.amazonaws.com
+      #   - https://s3.ap-northeast-1.amazonaws.com
+      #   labels:
+      #     region: ap-northeast-1
+      # - targets:
+      #   - https://sts.ca-central-1.amazonaws.com
+      #   - https://s3.ca-central-1.amazonaws.com
+      #   labels:
+      #     region: ca-central-1
+      # - targets:
+      #   - https://sts.cn-north-1.amazonaws.com
+      #   - https://s3.cn-north-1.amazonaws.com
+      #   labels:
+      #     region: cn-north-1
+      # - targets:
+      #   - https://sts.cn-northwest-1.amazonaws.com
+      #   - https://s3.cn-northwest-1.amazonaws.com
+      #   labels:
+      #     region: cn-northwest-1
+      # - targets:
+      #   - https://sts.eu-central-1.amazonaws.com
+      #   - https://s3.eu-central-1.amazonaws.com
+      #   labels:
+      #     region: eu-central-1
+      - targets:
+        - https://sts.eu-west-1.amazonaws.com
+        - https://s3.eu-west-1.amazonaws.com
+        labels:
+          region: eu-west-1
+      # - targets:
+      #   - https://sts.eu-west-2.amazonaws.com
+      #   - https://s3.eu-west-2.amazonaws.com
+      #   labels:
+      #     region: eu-west-2
+      # - targets:
+      #   - https://sts.eu-south-1.amazonaws.com
+      #   - https://s3.eu-south-1.amazonaws.com
+      #   labels:
+      #     region: eu-south-1
+      # - targets:
+      #   - https://sts.eu-west-3.amazonaws.com
+      #   - https://s3.eu-west-3.amazonaws.com
+      #   labels:
+      #     region: eu-west-3
+      # - targets:
+      #   - https://sts.eu-north-1.amazonaws.com
+      #   - https://s3.eu-north-1.amazonaws.com
+      #   labels:
+      #     region: eu-north-1
+      - targets:
+        - https://sts.me-south-1.amazonaws.com
+        - https://s3.me-south-1.amazonaws.com
+        labels:
+          region: me-south-1
+      # - targets:
+      #   - https://sts.sa-east-1.amazonaws.com
+      #   - https://s3.sa-east-1.amazonaws.com
+      #   labels:
+      #     region: sa-east-1
+
+
+    relabel_configs:
+      - source_labels: [__address__]
+        target_label: __param_target
+      - source_labels: [__param_target]
+        target_label: instance
+      - target_label: __address__
+        replacement: blackbox:9115
+
   - job_name: 'blackbox-http'
     scrape_interval: 1m
     metrics_path: /blackbox/probe
@@ -100,8 +236,11 @@ scrape_configs:
       module: [http_2xx_v4]
     static_configs:
       - targets:
-        - prometheus.io
-        - www.google.com
+        - http://prometheus.io
+        - http://www.google.com
+        labels:
+          region: global
+
     relabel_configs:
       - source_labels: [__address__]
         target_label: __param_target
